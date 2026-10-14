@@ -1,0 +1,53 @@
+name: Mise en ligne (GitHub Pages)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Données Tanzil (texte, traduction, pages) et police
+        run: |
+          mkdir -p tmp web/fonts
+          curl -fsSL -A "Mozilla/5.0" "https://tanzil.net/pub/download/index.php?quranType=uthmani&outType=txt-2&agree=true" -o tmp/quran-uthmani.txt
+          if ! curl -fsSL -A "Mozilla/5.0" "https://tanzil.net/trans/?transID=fr.hamidullah&type=txt-2" -o tmp/quran-translation.txt; then echo "::warning::traduction indisponible"; echo > tmp/quran-translation.txt; fi
+          if ! curl -fsSL -A "Mozilla/5.0" "https://tanzil.net/res/text/metadata/quran-data.xml" -o tmp/quran-data.xml; then echo "::warning::métadonnées indisponibles"; echo > tmp/quran-data.xml; fi
+          f=web/fonts/amiri_quran.ttf
+          curl -fsSL "https://raw.githubusercontent.com/google/fonts/main/ofl/amiriquran/AmiriQuran-Regular.ttf" -o "$f" \
+            || curl -fsSL "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/amiriquran/AmiriQuran-Regular.ttf" -o "$f"
+          test "$(stat -c %s "$f")" -gt 50000
+          python3 web/build_data.py tmp/quran-uthmani.txt tmp/quran-translation.txt tmp/quran-data.xml web/data.json
+
+      - name: Assembler le site
+        run: |
+          mkdir _site
+          cp -r web/index.html web/style.css web/app.js web/suras.js web/sw.js web/manifest.webmanifest web/data.json web/fonts web/icons _site/
+          sed -i "s/__VERSION__/w${{ github.run_number }}/" _site/sw.js _site/app.js
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.d.outputs.page_url }}
+    steps:
+      - id: d
+        uses: actions/deploy-pages@v4

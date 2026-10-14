@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Al-Qur'an</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#3F4E66">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Al-Qur'an">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="style-0">
+<div id="home">
+  <header class="top"><h1>Al-Qur'an</h1></header>
+  <main id="homeBody"></main>
+  <nav class="tabs">
+    <button data-tab="0">Sourates</button>
+    <button data-tab="1">Marque-pages</button>
+    <button data-tab="2">Paramètres</button>
+  </nav>
+</div>
+
+<div id="reader" hidden>
+  <div id="pageWrap"><div id="page"></div></div>
+  <div id="controls">
+    <button id="btnHome" aria-label="Accueil">⌂</button>
+    <button id="btnPlay" aria-label="Défilement" hidden>▶</button>
+    <button id="btnSlower" class="small" hidden>−</button>
+    <button id="btnFaster" class="small" hidden>+</button>
+  </div>
+  <div id="panel" hidden>
+    <div class="ph"><span id="panelRef"></span><button id="panelClose" aria-label="Fermer">✕</button></div>
+    <div id="panelTr" hidden></div>
+    <div class="pb">
+      <button id="actMark"><i>☆</i><span>Marque-page</span></button>
+      <button id="actTr"><i>📖</i><span>Traduction</span></button>
+      <button id="actShare"><i>↗</i><span>Partager</span></button>
+      <button id="actCopy"><i>⧉</i><span>Copier</span></button>
+    </div>
+  </div>
+</div>
+<div id="toast" hidden></div>
+<div id="loading">Chargement…</div>
+<script src="suras.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
